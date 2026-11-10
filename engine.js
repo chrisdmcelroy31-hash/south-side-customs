@@ -169,7 +169,7 @@ function ensureCtx() {
   const low = ctx.createBiquadFilter(); low.type = 'lowshelf'; low.frequency.value = 110; low.gain.value = 5;
   const comp = ctx.createDynamicsCompressor();
   comp.threshold.value = -26; comp.knee.value = 6; comp.ratio.value = 5; comp.attack.value = 0.003; comp.release.value = 0.12;
-  const makeup = ctx.createGain(); makeup.gain.value = 1.8; // about 10 dB louder than the raw recording, peaks rounded by the clipper
+  const makeup = ctx.createGain(); makeup.gain.value = 0.9; // about the recording's own level: heavy, but not a jump scare
   gain = ctx.createGain();
   analyser = ctx.createAnalyser(); analyser.fftSize = 512;
   // soft clipper: rounds off the peaks the makeup gain pushes past full scale, and adds some grit
@@ -198,8 +198,10 @@ async function start() {
   await ensureBuffer();
   await resumed;
   if (muted) return;
+  // start low on the starter and let the motor rumble up as it catches
   gain.gain.cancelScheduledValues(ctx.currentTime);
-  gain.gain.setValueAtTime(1, ctx.currentTime);
+  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.75, ctx.currentTime + 1.6);
   src = ctx.createBufferSource();
   src.buffer = buffer;
   src.connect(gain);
@@ -227,7 +229,7 @@ function shake() {
     if (!src) { canvas.style.translate = ''; shaking = false; return; }
     analyser.getFloatTimeDomainData(buf);
     let e = 0; for (const v of buf) e += v * v;
-    const a = Math.min(1, Math.sqrt(e / buf.length) * 2.2) * 3.2;
+    const a = Math.min(1, Math.sqrt(e / buf.length) * 4.4) * 3.2; // scaled up to match the quieter mix, so the shake stays the same
     canvas.style.translate = `${((Math.random() - 0.5) * a).toFixed(2)}px ${((Math.random() - 0.5) * a).toFixed(2)}px`;
     requestAnimationFrame(step);
   };

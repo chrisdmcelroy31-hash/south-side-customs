@@ -1232,7 +1232,7 @@ form.addEventListener('submit', (e) => {
       if (!res.ok) return fail(body.error || "The request didn't go through. Try again in a minute.", body.field);
       form.reset();
       button.textContent = 'Consult requested';
-      status.textContent = `Consult requested. We'll call you within two working days, ${name.split(' ')[0]}.`;
+      status.textContent = `Thanks, ${name.split(' ')[0]}. This is a concept site, so your request went to MACC Studios, the studio that built it. We'll reply within two working days.`;
     })
     .catch(() => fail("Couldn't reach the shop. Check your connection and try again."));
 });

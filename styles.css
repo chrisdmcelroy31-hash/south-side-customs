@@ -184,11 +184,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .form-status { margin: 0; min-height: 1.5em; font-weight: 600; }
 .form-status.err { color: var(--candy); }
 
+/* solid band so the address and the model credit stay readable over the 3D table */
 .shop-foot {
-  margin-top: auto; padding-top: 40vh; display: flex; gap: 32px; flex-wrap: wrap;
-  font-size: var(--step--1); color: rgba(220,213,196,.75);
+  position: relative; display: flex; flex-wrap: wrap; gap: 6px 32px;
+  padding: 28px clamp(16px, 4vw, 48px) 32px;
+  background: #14100e; border-top: 1px solid rgba(220,213,196,.18);
+  font-size: var(--step--1); color: #e6dfcf; line-height: 1.5;
 }
 .shop-foot p { margin: 0; }
+.shop-foot .concept { flex-basis: 100%; margin-bottom: 6px; }
+.shop-foot a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.ticket-form .form-note { margin: 0; font-size: .78rem; opacity: .7; }
 
 /* ---------- station rail ---------- */
 .rail {
@@ -247,8 +253,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
 
-.shop-foot .credit { flex-basis: 100%; opacity: .6; font-size: .8em; }
-.shop-foot .credit a { color: inherit; }
+.shop-foot .credit { flex-basis: 100%; color: #b9b0a0; font-size: .85em; }
 
 /* ---------- spec sheet (customizer) ---------- */
 .customizer { min-height: 230vh; padding: 0 clamp(16px, 4vw, 48px); }
