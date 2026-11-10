@@ -162,27 +162,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .ticket-form { top: 12vh; width: min(23rem, 100%); padding: 24px 24px 18px; transform: rotate(-.6deg); }
 .ticket-form h2 { font-size: clamp(1.7rem, 2.6vw, 2.15rem); margin-bottom: 8px; }
 .ticket-form > p { font-size: var(--step--1); margin-bottom: 10px; }
-.ticket-form form { display: grid; gap: 10px; }
-.ticket-form label { display: grid; gap: 2px; font-weight: 600; font-size: var(--step--1); }
-.ticket-form input, .ticket-form textarea {
-  font: 400 var(--step-0)/1.4 var(--body); color: var(--ink);
-  background: transparent; border: 0; border-bottom: 1.5px solid var(--ink);
-  padding: 6px 0; border-radius: 0; resize: vertical;
-}
-.ticket-form textarea::placeholder { color: rgba(31,26,21,.5); font-style: italic; }
-.ticket-form button {
-  margin-top: 6px; justify-self: start;
-  font: 800 1.35rem/1 var(--display); letter-spacing: .02em;
-  background: var(--candy); color: #fbf3e4; border: 0; border-radius: 2px;
-  padding: 14px 22px; cursor: pointer;
-  box-shadow: inset 0 -3px 0 var(--candy-deep);
-}
-.ticket-form button:hover { background: #b0161f; }
-.ticket-form button:active { transform: translateY(1px); box-shadow: inset 0 -1px 0 var(--candy-deep); }
-.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.ticket-form button:disabled { opacity: .75; cursor: default; }
-.form-status { margin: 0; min-height: 1.5em; font-weight: 600; }
-.form-status.err { color: var(--candy); }
+.ticket-form .spec-send { display: inline-block; margin-top: 6px; }
 
 /* solid band so the address and the model credit stay readable over the 3D table */
 .shop-foot {
@@ -194,7 +174,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .shop-foot p { margin: 0; }
 .shop-foot .concept { flex-basis: 100%; margin-bottom: 6px; }
 .shop-foot a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 2px; }
-.ticket-form .form-note { margin: 0; font-size: .78rem; opacity: .7; }
+
 
 /* ---------- station rail ---------- */
 .rail {
@@ -321,8 +301,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .spec-send:hover { background: #b0161f; }
 .spec-reset { background: none; border: 0; padding: 4px 0; font: 500 var(--step--1) var(--body); color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
-.form-build { margin: 0; font-size: var(--step--1); padding: 8px 10px; background: rgba(31,26,21,.07); border-left: 3px solid var(--candy); }
-.form-build a { color: var(--candy); font-weight: 600; }
 
 @media (max-width: 760px) {
   .customizer { min-height: 200vh; }

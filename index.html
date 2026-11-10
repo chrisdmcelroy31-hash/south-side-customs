@@ -30,7 +30,7 @@
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="cross" d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <span class="sound-label">Sound on</span>
     </button>
-    <a href="#consult" class="nav-cta">Request a consult</a>
+    <a href="#customize" class="nav-cta">Make it yours</a>
   </nav>
 </header>
 
@@ -569,27 +569,16 @@
       <div class="spec-tabs" role="tablist" aria-label="Parts to change"></div>
       <div class="spec-panels"></div>
       <div class="spec-foot">
-        <a class="spec-send" href="#consult">Request a consult with this build</a>
         <button type="button" class="spec-reset">Reset to the shop build</button>
       </div>
     </article>
   </section>
 
-  <section class="finale" id="consult">
+  <section class="finale" id="finale">
     <article class="ticket ticket-form">
       <h2>Your bike starts as a sketch on this table.</h2>
-      <p>Tell us what you ride now and what you want to ride next. We take on six builds a year and call back within two working days.</p>
-      <form id="consult-form" novalidate>
-        <label>Name<input name="name" autocomplete="name" required></label>
-        <label>Email<input name="email" type="email" autocomplete="email" required></label>
-        <label>What do you want built?<textarea name="idea" rows="2" placeholder="A long, low chopper for two-up weekends"></textarea></label>
-        <p class="form-build" hidden>Your build: <span></span> <a href="#customize">Change it</a></p>
-        <input type="hidden" name="build">
-        <label class="hp" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off"></label>
-        <button type="submit">Request a consult</button>
-        <p class="form-status" role="status" aria-live="polite"></p>
-        <p class="form-note">Concept site: requests go to MACC Studios, who built it.</p>
-      </form>
+      <p>Every build here starts with what you ride now and what you want to ride next. Scroll back up and keep changing this one: the link in your address bar saves your spec.</p>
+      <a class="spec-send" href="#customize">Back to the spec sheet</a>
     </article>
   </section>
 

@@ -982,7 +982,7 @@ function layout() {
   framing.station = fit(document.querySelector('.station .ticket'));
   framing.spec = fit(document.querySelector('.spec-sheet'));
   framing.form = fit(document.querySelector('.ticket-form'));
-  const fin = document.getElementById('consult');
+  const fin = document.getElementById('finale');
   framing.formRange = fin ? [fin.offsetTop - vh, fin.offsetTop - vh * 0.4] : [Infinity, Infinity];
   framing.last = null;
   maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
@@ -1000,7 +1000,7 @@ function layout() {
 addEventListener('resize', layout);
 const framing = { station: { x: 0, k: 1 }, spec: { x: 0, k: 1 }, form: { x: 0, k: 1 }, formRange: [Infinity, Infinity], last: null };
 function frameView(sw) {
-  // the consult card is wider than a station card: as it arrives, frame the bike in the space beside it instead
+  // the closing card is wider than a station card: as it arrives, frame the bike in the space beside it instead
   const fw = THREE.MathUtils.smoothstep(smooth, framing.formRange[0], framing.formRange[1]);
   const bx = lerp(framing.station.x, framing.form.x, fw), bk = lerp(framing.station.k, framing.form.k, fw);
   const x = lerp(bx, framing.spec.x, sw), k = lerp(bk, framing.spec.k, sw);
@@ -1196,46 +1196,6 @@ function updateTip() {
   tip.style.transform = `translate(${pointer.x + 18}px, ${pointer.y + 18}px)`;
   tip.hidden = false;
 }
-
-/* ---------------- consult form ---------------- */
-const form = document.getElementById('consult-form');
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const status = form.querySelector('.form-status');
-  const name = form.elements.name.value.trim();
-  const email = form.elements.email;
-  if (!name || !email.value.trim() || !email.checkValidity()) {
-    status.textContent = !name ? 'Add your name so we know who to call.' : 'Add an email address we can reply to.';
-    status.className = 'form-status err';
-    (!name ? form.elements.name : email).focus();
-    return;
-  }
-  const button = form.querySelector('button');
-  const fail = (msg, field) => {
-    status.textContent = msg;
-    status.className = 'form-status err';
-    button.disabled = false;
-    button.textContent = 'Request a consult';
-    if (field && form.elements[field]) form.elements[field].focus();
-  };
-  button.disabled = true;
-  button.textContent = 'Sending…';
-  status.textContent = '';
-  status.className = 'form-status';
-  fetch('/api/consult', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(Object.fromEntries(new FormData(form))),
-  })
-    .then(async (res) => {
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok) return fail(body.error || "The request didn't go through. Try again in a minute.", body.field);
-      form.reset();
-      button.textContent = 'Consult requested';
-      status.textContent = `Thanks, ${name.split(' ')[0]}. This is a concept site, so your request went to MACC Studios, the studio that built it. We'll reply within two working days.`;
-    })
-    .catch(() => fail("Couldn't reach the shop. Check your connection and try again."));
-});
 
 document.fonts.ready.then(layout);
 layout();
@@ -1623,7 +1583,6 @@ function onModelReady() {
 /* --- the sheet itself --- */
 const sheet = document.querySelector('.spec-sheet');
 const tabsEl = sheet.querySelector('.spec-tabs'), panelsEl = sheet.querySelector('.spec-panels');
-const buildLine = document.querySelector('.form-build'), buildField = document.querySelector('#consult-form [name="build"]');
 specCam.focus = SPEC[0].focus;
 
 SPEC.forEach((tab, i) => {
@@ -1687,12 +1646,6 @@ function syncSheet() {
     }
   });
   const custom = KEYS.some((k) => spec[k] !== SHOP_BUILD[k]);
-  buildLine.hidden = !touched;
-  // the form shows only what changed; the email gets the whole sheet
-  const base = STYLES[spec.style], styleName = labelOf('style', spec.style);
-  const changes = FIELDS.filter((f) => f.key !== 'style' && spec[f.key] !== base[f.key]).map((f) => `${f.name.toLowerCase()} ${labelOf(f.key, spec[f.key]).toLowerCase()}`);
-  buildLine.querySelector('span').textContent = changes.length ? `${styleName}, with ${changes.join(', ')}.` : `${styleName}, as shown.`;
-  buildField.value = touched ? summary() : '';
   const url = new URL(location.href);
   if (custom) url.searchParams.set('build', KEYS.map((k) => spec[k]).join('.')); else url.searchParams.delete('build');
   history.replaceState(null, '', url);
@@ -1720,7 +1673,6 @@ sheet.querySelector('.spec-reset').addEventListener('click', () => {
   applyAll();
   syncSheet();
 });
-form.addEventListener('reset', () => setTimeout(syncSheet));
 applyPaint();
 APPLY.seat();
 syncSheet();
