@@ -37,7 +37,7 @@ export async function POST(request) {
     method: 'POST',
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: CONSULT_FROM_EMAIL || 'Kettle & Rake site <onboarding@resend.dev>',
+      from: CONSULT_FROM_EMAIL || 'South Side Customs site <onboarding@resend.dev>',
       to: CONSULT_TO_EMAIL.split(',').map((s) => s.trim()),
       reply_to: email,
       subject: `Build consult request from ${name}`,
