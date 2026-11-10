@@ -353,3 +353,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* seven tabs: let them wrap onto a second row instead of scrolling out of sight */
 .spec-tabs { flex-wrap: wrap; overflow: visible; }
 .spec-tabs button { flex: 1 0 auto; }
+
+/* ---------- engine sound toggle ---------- */
+.sound-toggle {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 0 4px;
+  background: none; border: 0; color: var(--tape);
+  font: 500 var(--step-0)/1 var(--body); cursor: pointer;
+}
+.sound-toggle:hover .sound-label { text-decoration: underline; text-underline-offset: 4px; }
+.sound-toggle:focus-visible { outline: 2px solid var(--window); outline-offset: 2px; }
+.sound-toggle .cross { display: none; }
+.sound-toggle[aria-pressed="false"] .waves { display: none; }
+.sound-toggle[aria-pressed="false"] .cross { display: inline; }
+.sound-toggle.running svg { color: var(--window); }
+@media (max-width: 760px) {
+  .sound-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
