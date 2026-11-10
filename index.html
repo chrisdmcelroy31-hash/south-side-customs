@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kettle &amp; Rake Customs</title>
+<meta name="description" content="Custom choppers built one at a time on the same steel table. Scroll to watch a build come together.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:opsz,wght@10..72,500;10..72,800;10..72,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/environments/RoomEnvironment.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/geometries/RoundedBoxGeometry.js" crossorigin>
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="#top">Kettle &amp; Rake</a>
+  <nav aria-label="Primary">
+    <a href="#station-1">The build</a>
+    <a href="#consult" class="nav-cta">Request a consult</a>
+  </nav>
+</header>
+
+<!-- ============ PARALLAX: back wall (slowest) ============ -->
+<!-- brick bays between steel columns, high mullioned windows, a corrugated loading bay with a skylight,
+     and the wall dressed like a working chopper shop: framed builds, tin signs, plates, jackets, hung tires -->
+<div class="layer layer-wall" aria-hidden="true">
+  <svg viewBox="0 0 4000 1000" preserveAspectRatio="xMinYMax slice">
+    <defs>
+      <pattern id="brick" width="120" height="40" patternUnits="userSpaceOnUse">
+        <rect width="120" height="40" fill="#2e231d"/>
+        <rect x="1" y="1" width="58" height="17" fill="#5b4033"/>
+        <rect x="61" y="1" width="58" height="17" fill="#4d372c"/>
+        <rect x="-29" y="21" width="58" height="17" fill="#533a2e"/>
+        <rect x="31" y="21" width="58" height="17" fill="#634636"/>
+        <rect x="91" y="21" width="58" height="17" fill="#48342a"/>
+      </pattern>
+      <pattern id="corrugated" width="26" height="40" patternUnits="userSpaceOnUse">
+        <rect width="26" height="40" fill="#5c4a40"/>
+        <rect width="8" height="40" fill="#7a6658"/>
+        <rect x="8" width="5" height="40" fill="#8e7a6a"/>
+        <rect x="18" width="8" height="40" fill="#3f322b"/>
+      </pattern>
+      <!-- blotchy soot and damp: a large-scale noise used as a darkening mask -->
+      <filter id="grimeF" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency=".006 .012" numOctaves="4" seed="7"/>
+        <feColorMatrix values="0 0 0 0 .07  0 0 0 0 .05  0 0 0 0 .04  0 0 0 -2.6 1.55"/>
+      </filter>
+      <!-- rust runs down the sheet metal: noise stretched tall -->
+      <filter id="rustF" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency=".03 .002" numOctaves="3" seed="3"/>
+        <feColorMatrix values="0 0 0 0 .45  0 0 0 0 .2  0 0 0 0 .08  0 0 0 -3 1.6"/>
+      </filter>
+      <filter id="concreteF" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="4" seed="21"/>
+        <feColorMatrix values="0 0 0 0 .12  0 0 0 0 .1  0 0 0 0 .09  0 0 0 -2 1.15"/>
+      </filter>
+      <filter id="haze" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="28"/></filter>
+      <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+      <filter id="rough" x="-5%" y="-20%" width="110%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.35" result="m"/>
+        <feComposite in="SourceGraphic" in2="m" operator="in"/>
+      </filter>
+      <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f6f1e4"/><stop offset=".7" stop-color="#e4dac4"/><stop offset="1" stop-color="#b9ab90"/>
+      </linearGradient>
+      <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff4dc" stop-opacity=".34"/><stop offset="1" stop-color="#fff4dc" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="plaster" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#6a655d"/><stop offset="1" stop-color="#47433d"/>
+      </linearGradient>
+      <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#6b665e"/><stop offset=".4" stop-color="#4e4a44"/><stop offset="1" stop-color="#2c2925"/>
+      </linearGradient>
+      <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#1d1714"/><stop offset=".35" stop-color="#4a3a30"/><stop offset=".6" stop-color="#2c231d"/><stop offset="1" stop-color="#151110"/>
+      </linearGradient>
+      <linearGradient id="sepia" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#d9c6a0"/><stop offset="1" stop-color="#a88c63"/>
+      </linearGradient>
+      <linearGradient id="redwall" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7a3b2c"/><stop offset="1" stop-color="#3e1d16"/>
+      </linearGradient>
+      <linearGradient id="slats" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#9a958c"/><stop offset="1" stop-color="#6d6961"/>
+      </linearGradient>
+      <radialGradient id="lampGlow">
+        <stop offset="0" stop-color="#ffe9b8" stop-opacity=".75"/><stop offset=".35" stop-color="#ffd98f" stop-opacity=".22"/><stop offset="1" stop-color="#ffd98f" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- side-view chopper, used for the framed prints and the bikes parked in the bay -->
+      <symbol id="chop" viewBox="0 0 620 300">
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="110" cy="226" r="66" stroke-width="18"/>
+          <circle cx="110" cy="226" r="42" stroke-width="3"/>
+          <circle cx="540" cy="234" r="58" stroke-width="9"/>
+          <circle cx="540" cy="234" r="47" stroke-width="2"/>
+          <path d="M540 234 L420 40" stroke-width="8"/>
+          <path d="M528 238 L410 48" stroke-width="4"/>
+          <path d="M420 40 L414 2 Q410 -10 384 -2" stroke-width="5"/>
+          <path d="M110 226 L240 150 L420 72" stroke-width="7"/>
+          <path d="M110 226 L250 224 L338 216 L424 92" stroke-width="7"/>
+          <path d="M140 160 L150 70 Q155 52 170 60 L176 150" stroke-width="5"/>
+        </g>
+        <g fill="currentColor">
+          <path d="M248 156 L282 100 L304 106 L282 164Z M298 164 L330 106 L352 112 L330 168Z"/>
+          <rect x="240" y="158" width="112" height="60" rx="12"/>
+          <ellipse cx="356" cy="98" rx="74" ry="22" transform="rotate(-14 356 98)"/>
+          <path d="M168 142 Q214 116 262 128 L252 144 Q212 140 176 154Z"/>
+          <path d="M34 186 Q98 128 178 150 L168 164 Q106 150 52 196Z"/>
+          <path d="M262 222 L48 238 L50 248 L264 232Z"/>
+        </g>
+      </symbol>
+    </defs>
+
+    <!-- ===== structure ===== -->
+    <rect width="4000" height="800" fill="#1a1411"/>
+    <rect x="50" y="40" width="1240" height="540" fill="url(#brick)"/>
+    <rect x="1350" y="40" width="1290" height="540" fill="url(#brick)"/>
+    <rect x="50" y="580" width="1240" height="210" fill="url(#plaster)"/>
+    <rect x="1350" y="580" width="1290" height="210" fill="url(#plaster)"/>
+    <rect x="50" y="572" width="2590" height="10" fill="#2a2420"/>
+    <rect x="2700" y="40" width="1300" height="750" fill="url(#corrugated)"/>
+    <rect x="2700" y="40" width="1300" height="750" filter="url(#rustF)"/>
+    <rect width="2700" height="800" filter="url(#grimeF)"/>
+
+    <!-- high windows, overexposed and dirty -->
+    <g>
+      <g transform="translate(300 70)">
+        <rect x="-14" y="-14" width="548" height="258" fill="#1b1714"/>
+        <rect width="520" height="230" fill="url(#glass)"/>
+        <g stroke="#2a2522" stroke-width="10"><path d="M87 0V230M174 0V230M261 0V230M348 0V230M435 0V230M0 77H520M0 154H520"/></g>
+        <rect x="174" y="77" width="87" height="77" fill="#9d927e" opacity=".55"/>
+        <rect x="-20" y="240" width="560" height="16" fill="#2a221d"/>
+      </g>
+      <g transform="translate(1560 90)">
+        <rect x="-14" y="-14" width="428" height="238" fill="#1b1714"/>
+        <rect width="400" height="210" fill="url(#glass)"/>
+        <g stroke="#2a2522" stroke-width="10"><path d="M80 0V210M160 0V210M240 0V210M320 0V210M0 70H400M0 140H400"/></g>
+        <rect x="240" y="0" width="80" height="70" fill="#a39880" opacity=".5"/>
+        <rect x="-20" y="220" width="440" height="16" fill="#2a221d"/>
+      </g>
+      <g transform="translate(2190 120)">
+        <rect x="-12" y="-12" width="324" height="204" fill="#1b1714"/>
+        <rect width="300" height="180" fill="url(#glass)"/>
+        <g stroke="#2a2522" stroke-width="9"><path d="M75 0V180M150 0V180M225 0V180M0 60H300M0 120H300"/></g>
+        <rect x="-18" y="190" width="336" height="14" fill="#2a221d"/>
+      </g>
+    </g>
+
+    <!-- steel columns and roof steel -->
+    <g fill="url(#steel)">
+      <rect x="0" y="0" width="54" height="800"/>
+      <rect x="1290" y="0" width="62" height="800"/>
+      <rect x="2638" y="0" width="64" height="800"/>
+      <rect x="3380" y="40" width="40" height="760"/>
+    </g>
+    <rect width="4000" height="44" fill="#16110f"/>
+    <path d="M2700 240H4000M2700 480H3380" stroke="#2a201b" stroke-width="22"/>
+    <path d="M2700 230H4000" stroke="#5a4538" stroke-width="3"/>
+    <path d="M2702 44L3380 240M3420 240L4000 70" stroke="#241b17" stroke-width="18"/>
+
+    <!-- skylight over the bay -->
+    <polygon points="3050,0 3330,0 3300,40 3080,40" fill="#f4efe2"/>
+
+    <!-- ===== loading bay: exit door and roll-up door ===== -->
+    <g transform="translate(3060 520)">
+      <rect x="-12" y="-12" width="214" height="282" fill="#241e1a"/>
+      <rect width="190" height="270" fill="#5a5751"/>
+      <rect x="12" y="12" width="166" height="246" fill="none" stroke="#45423d" stroke-width="4"/>
+      <rect x="150" y="130" width="22" height="8" rx="3" fill="#2b2926"/>
+      <g transform="translate(50 -62)">
+        <rect width="90" height="36" fill="#1f5a33"/>
+        <text x="45" y="27" text-anchor="middle" fill="#c9f2cf" font-family="Arial, sans-serif" font-weight="700" font-size="24">EXIT</text>
+      </g>
+    </g>
+    <g transform="translate(3440 350)">
+      <rect x="-16" y="-16" width="552" height="456" fill="#221c18"/>
+      <rect width="520" height="440" fill="url(#slats)"/>
+      <g stroke="#5b5750" stroke-width="5"><path d="M0 55H520M0 110H520M0 165H520M0 220H520M0 275H520M0 330H520M0 385H520"/></g>
+      <g fill="#f3eee2"><rect x="22" y="122" width="108" height="34"/><rect x="146" y="122" width="108" height="34"/><rect x="270" y="122" width="108" height="34"/><rect x="394" y="122" width="108" height="34"/></g>
+      <rect width="520" height="440" filter="url(#grimeF)" opacity=".6"/>
+    </g>
+
+    <!-- ===== wall dressing, left bay ===== -->
+    <!-- framed builds -->
+    <g transform="translate(110 330)">
+      <rect width="400" height="232" fill="#121010"/>
+      <rect x="10" y="10" width="380" height="212" fill="#e4dccb"/>
+      <rect x="26" y="26" width="348" height="180" fill="url(#sepia)"/>
+      <use href="#chop" x="46" y="56" width="310" height="150" color="#5a1a12"/>
+    </g>
+    <g transform="translate(540 336)">
+      <rect width="350" height="222" fill="#121010"/>
+      <rect x="10" y="10" width="330" height="202" fill="#d8cfbd"/>
+      <rect x="24" y="24" width="302" height="174" fill="#5f5a54"/>
+      <g stroke="#4c4843" stroke-width="3"><path d="M24 50H326M24 76H326M24 102H326M24 128H326M24 154H326M24 180H326"/></g>
+      <use href="#chop" x="44" y="60" width="270" height="132" color="#2a0d0a"/>
+    </g>
+    <!-- plate row and shop plaque -->
+    <g transform="translate(76 590)">
+      <g><rect width="120" height="56" rx="6" fill="#d8b23a"/><rect x="14" y="18" width="92" height="22" fill="#2c2416" opacity=".75"/></g>
+      <g transform="translate(130 0)"><rect width="120" height="56" rx="6" fill="#e3e0d6"/><rect x="14" y="18" width="92" height="22" fill="#24314f" opacity=".75"/></g>
+      <g transform="translate(0 66)"><rect width="120" height="56" rx="6" fill="#d9d4c4"/><rect x="14" y="18" width="92" height="22" fill="#7a1d18" opacity=".7"/></g>
+      <g transform="translate(130 66)"><rect width="120" height="56" rx="6" fill="#bfc8d0"/><rect x="14" y="18" width="92" height="22" fill="#1f2a3a" opacity=".75"/></g>
+    </g>
+    <g transform="translate(360 596)">
+      <rect width="370" height="58" fill="#1c1715"/>
+      <rect x="6" y="6" width="358" height="46" fill="none" stroke="#7b6a55" stroke-width="2"/>
+      <text x="185" y="42" text-anchor="middle" class="wall-sign" font-size="36" fill="#e8dfcb" letter-spacing="3">KETTLE &amp; RAKE</text>
+    </g>
+    <!-- leather jackets on hooks, a helmet, a small black poster -->
+    <g fill="#1c1410">
+      <path d="M380 690 Q420 672 460 690 L500 700 L520 790 L478 790 L470 760 L470 800 L370 800 L370 760 L362 790 L320 790 L340 700Z"/>
+      <path d="M418 688 L420 760 M422 688 L452 740" stroke="#3a2a22" stroke-width="3" fill="none"/>
+      <path d="M940 690 Q980 672 1020 690 L1058 700 L1078 790 L1036 790 L1030 760 L1030 800 L930 800 L930 760 L922 790 L880 790 L898 700Z" fill="#2f2117"/>
+    </g>
+    <circle cx="820" cy="640" r="34" fill="#b9a77f"/><path d="M786 640 A34 34 0 0 1 854 640Z" fill="#8f7e5b"/>
+    <g transform="translate(1110 600)">
+      <rect width="140" height="176" fill="#171313"/>
+      <circle cx="70" cy="70" r="36" fill="none" stroke="#a3201d" stroke-width="8"/>
+      <rect x="22" y="126" width="96" height="10" fill="#bfb39a"/><rect x="34" y="144" width="72" height="6" fill="#7d7363"/>
+    </g>
+
+    <!-- ===== wall dressing, middle bay ===== -->
+    <g transform="translate(1400 330)">
+      <rect width="300" height="220" fill="#121010"/>
+      <rect x="10" y="10" width="280" height="200" fill="#e1d8c5"/>
+      <rect x="24" y="24" width="252" height="172" fill="url(#redwall)"/>
+      <use href="#chop" x="36" y="60" width="230" height="120" color="#0f0b0a"/>
+    </g>
+    <g transform="translate(1740 330)">
+      <rect width="130" height="210" fill="#d6a52b"/>
+      <rect x="8" y="8" width="114" height="194" fill="none" stroke="#5a2a14" stroke-width="4"/>
+      <rect x="18" y="20" width="94" height="22" fill="#7a2a14"/>
+      <use href="#chop" x="12" y="66" width="106" height="62" color="#3a1c10"/>
+      <rect x="20" y="150" width="90" height="10" fill="#5a2a14"/><rect x="30" y="170" width="70" height="8" fill="#5a2a14"/>
+    </g>
+    <g transform="translate(1906 318)">
+      <path d="M0 0H70V170L35 200L0 170Z" fill="#1d2c4d"/>
+      <circle cx="35" cy="60" r="22" fill="none" stroke="#c9c2b0" stroke-width="5"/>
+      <rect x="12" y="104" width="46" height="8" fill="#a52a22"/>
+    </g>
+    <g transform="translate(2020 352)">
+      <rect width="310" height="200" fill="#121010"/>
+      <rect x="10" y="10" width="290" height="180" fill="#d2b56f"/>
+      <use href="#chop" x="34" y="50" width="244" height="124" color="#2b1a0e"/>
+    </g>
+    <g transform="translate(2360 360)">
+      <rect width="96" height="150" fill="#ece5d4"/><rect x="8" y="8" width="80" height="134" fill="#8a1d18"/>
+      <path d="M20 40 Q48 20 76 40 L70 110 L26 110Z" fill="#1a1110" opacity=".8"/>
+    </g>
+    <!-- lower: plaque, smaller frames, hung tires -->
+    <g transform="translate(1420 596)">
+      <rect width="300" height="54" fill="#1c1715"/>
+      <text x="150" y="38" text-anchor="middle" class="wall-sign" font-size="32" fill="#e8dfcb" letter-spacing="4">BAY 4 · EST 1998</text>
+    </g>
+    <g transform="translate(1440 670)">
+      <rect width="230" height="150" fill="#121010"/><rect x="9" y="9" width="212" height="132" fill="#e1d6bd"/>
+      <rect x="20" y="20" width="190" height="110" fill="url(#sepia)"/>
+      <use href="#chop" x="30" y="40" width="170" height="86" color="#3d130d"/>
+    </g>
+    <g transform="translate(1710 680)">
+      <rect width="160" height="130" fill="#121010"/><rect x="9" y="9" width="142" height="112" fill="#d8cdb5"/>
+      <use href="#chop" x="18" y="40" width="124" height="66" color="#4a150e"/>
+    </g>
+    <g fill="none" stroke="#141110" stroke-linecap="round">
+      <ellipse cx="1985" cy="660" rx="62" ry="78" stroke-width="30"/>
+      <ellipse cx="2470" cy="650" rx="56" ry="70" stroke-width="26"/>
+      <ellipse cx="2560" cy="672" rx="54" ry="68" stroke-width="26"/>
+    </g>
+    <g fill="#5b5652"><rect x="1980" y="572" width="10" height="16"/><rect x="2465" y="566" width="10" height="16"/></g>
+
+    <!-- pendant lamps: wire, enamel shade, warm pool of light -->
+    <g>
+      <circle cx="1060" cy="250" r="220" fill="url(#lampGlow)"/>
+      <circle cx="2060" cy="330" r="220" fill="url(#lampGlow)"/>
+      <circle cx="2560" cy="380" r="200" fill="url(#lampGlow)"/>
+      <path d="M1060 0V198M2060 0V278M2560 0V330" stroke="#121010" stroke-width="4"/>
+      <g fill="#3a3f42">
+        <path d="M1010 238 Q1012 200 1060 196 Q1108 200 1110 238Z"/>
+        <path d="M2010 318 Q2012 280 2060 276 Q2108 280 2110 318Z"/>
+        <path d="M2516 366 Q2518 332 2560 328 Q2602 332 2604 366Z"/>
+      </g>
+      <g fill="#fff2cf"><ellipse cx="1060" cy="240" rx="44" ry="8"/><ellipse cx="2060" cy="320" rx="44" ry="8"/><ellipse cx="2560" cy="368" rx="38" ry="7"/></g>
+    </g>
+
+    <!-- ===== light: window shafts, skylight shaft, drifting haze ===== -->
+    <g filter="url(#haze)">
+      <polygon points="300,90 820,90 1250,800 600,800" fill="url(#shaft)"/>
+      <polygon points="1560,110 1960,110 2380,800 1820,800" fill="url(#shaft)"/>
+      <polygon points="3060,40 3320,40 3560,800 2900,800" fill="url(#shaft)" opacity="1.3"/>
+      <ellipse cx="3150" cy="420" rx="420" ry="160" fill="#d7d2c6" opacity=".16"/>
+      <ellipse cx="2200" cy="300" rx="380" ry="120" fill="#d7d2c6" opacity=".1"/>
+      <ellipse cx="900" cy="380" rx="320" ry="110" fill="#d7d2c6" opacity=".08"/>
+    </g>
+
+    <!-- ===== floor: sealed concrete, oil stains, saw joints, light from the door ===== -->
+    <rect y="790" width="4000" height="210" fill="url(#floor)"/>
+    <rect y="790" width="4000" height="210" filter="url(#concreteF)"/>
+    <rect y="786" width="4000" height="8" fill="#1d1916"/>
+    <g stroke="#2a2622" stroke-width="3" opacity=".6"><path d="M0 880H4000M700 790L520 1000M1900 790L1840 1000M3100 790L3200 1000"/></g>
+    <g filter="url(#soft)" fill="#1a1512" opacity=".45">
+      <ellipse cx="820" cy="900" rx="160" ry="22"/><ellipse cx="1480" cy="950" rx="90" ry="14"/>
+      <ellipse cx="2380" cy="920" rx="210" ry="26"/><ellipse cx="2950" cy="860" rx="70" ry="10"/>
+    </g>
+    <polygon points="3440,792 3960,792 4000,1000 3200,1000" fill="#e9e3d4" opacity=".1" filter="url(#haze)"/>
+  </svg>
+</div>
+
+<!-- ============ PARALLAX: equipment (middle) ============ -->
+<div class="layer layer-gear" aria-hidden="true">
+  <svg viewBox="0 0 4000 1000" preserveAspectRatio="xMinYMax slice">
+    <defs>
+      <linearGradient id="chestRed" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#5e1612"/><stop offset=".25" stop-color="#8e2219"/><stop offset=".8" stop-color="#7a1c15"/><stop offset="1" stop-color="#4a110e"/>
+      </linearGradient>
+      <linearGradient id="benchTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#6b6862"/><stop offset="1" stop-color="#34322e"/>
+      </linearGradient>
+      <linearGradient id="drum" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#22301f"/><stop offset=".35" stop-color="#4a5f43"/><stop offset="1" stop-color="#1b2418"/>
+      </linearGradient>
+      <linearGradient id="liftTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7a7770"/><stop offset="1" stop-color="#3c3a36"/>
+      </linearGradient>
+    </defs>
+
+    <!-- oil drum -->
+    <g transform="translate(40 680)">
+      <rect width="150" height="230" rx="10" fill="url(#drum)"/>
+      <g fill="#18200f" opacity=".7"><rect y="70" width="150" height="8"/><rect y="150" width="150" height="8"/></g>
+      <ellipse cx="75" cy="4" rx="75" ry="10" fill="#33402e"/>
+    </g>
+    <!-- welder on its cart -->
+    <g transform="translate(240 690)">
+      <rect width="170" height="110" rx="6" fill="#8a5a22"/>
+      <rect x="12" y="14" width="96" height="44" fill="#2a1e12"/>
+      <circle cx="132" cy="36" r="14" fill="#1e1914"/><circle cx="132" cy="80" r="10" fill="#1e1914"/>
+      <rect x="-6" y="110" width="182" height="10" fill="#1d1b19"/>
+      <rect x="4" y="120" width="10" height="90" fill="#1d1b19"/><rect x="156" y="120" width="10" height="90" fill="#1d1b19"/>
+      <circle cx="10" cy="214" r="14" fill="#111"/><circle cx="160" cy="214" r="14" fill="#111"/>
+      <path d="M170 60 Q240 90 210 180 Q200 220 260 230" stroke="#151312" stroke-width="7" fill="none"/>
+    </g>
+    <!-- steel workbench with toolbox -->
+    <g transform="translate(470 700)">
+      <rect x="40" y="-62" width="200" height="62" fill="#4b4f35"/>
+      <rect x="40" y="-74" width="200" height="14" fill="#3b3f2a"/>
+      <g fill="#8c8f93"><rect x="60" y="-96" width="10" height="24"/><rect x="80" y="-104" width="10" height="32"/><rect x="100" y="-92" width="10" height="20"/><rect x="190" y="-100" width="12" height="28"/></g>
+      <rect x="300" y="-40" width="60" height="40" rx="6" fill="#a8321f"/>
+      <rect width="560" height="26" fill="url(#benchTop)"/>
+      <g fill="#1d1c1a"><rect x="14" y="26" width="16" height="200"/><rect x="530" y="26" width="16" height="200"/><rect x="14" y="160" width="532" height="12"/></g>
+      <rect x="120" y="26" width="200" height="44" fill="#2b2a27"/><rect x="200" y="42" width="40" height="6" fill="#6f6c66"/>
+      <g fill="#2a2724"><rect x="60" y="130" width="60" height="30"/><rect x="380" y="118" width="90" height="42" fill="#7a5a2a"/></g>
+    </g>
+    <!-- scissor lift with ramp -->
+    <g transform="translate(1180 880)">
+      <rect width="560" height="26" fill="url(#liftTop)"/>
+      <polygon points="560,0 700,96 690,104 556,26" fill="#4a4843"/>
+      <g stroke="#1e1d1b" stroke-width="12"><path d="M60 26L500 96M60 96L500 26"/></g>
+      <rect x="20" y="96" width="520" height="14" fill="#1e1d1b"/>
+    </g>
+    <!-- second bench: vise and grinder -->
+    <g transform="translate(1860 700)">
+      <rect width="500" height="26" fill="url(#benchTop)"/>
+      <g fill="#1d1c1a"><rect x="14" y="26" width="16" height="200"/><rect x="470" y="26" width="16" height="200"/><rect x="14" y="160" width="472" height="12"/></g>
+      <g fill="#2e3236"><rect x="60" y="-46" width="120" height="46"/><rect x="40" y="-60" width="48" height="60"/><rect x="180" y="-34" width="70" height="10"/></g>
+      <g fill="#3a3f43"><rect x="330" y="-50" width="90" height="50" rx="10"/><circle cx="318" cy="-26" r="30"/><circle cx="432" cy="-26" r="30"/></g>
+      <g fill="#c7a33a"><rect x="250" y="-28" width="16" height="28"/><rect x="272" y="-36" width="16" height="36" fill="#9a2a1d"/></g>
+    </g>
+    <!-- red rolling tool chest -->
+    <g transform="translate(2440 500)">
+      <rect width="250" height="170" fill="url(#chestRed)"/>
+      <rect x="-6" y="-14" width="262" height="18" rx="4" fill="#4a110e"/>
+      <g stroke="#3a0c0a" stroke-width="3"><path d="M10 40H240M10 75H240M10 110H240M10 140H240"/></g>
+      <rect x="-10" y="170" width="270" height="12" fill="#2a2724"/>
+      <rect x="-6" y="182" width="262" height="220" fill="url(#chestRed)"/>
+      <g stroke="#3a0c0a" stroke-width="3"><path d="M4 230H252M4 278H252M4 326H252M4 374H252"/></g>
+      <g fill="#c9c6c0"><rect x="90" y="24" width="70" height="6" rx="3"/><rect x="90" y="58" width="70" height="6" rx="3"/><rect x="90" y="93" width="70" height="6" rx="3"/><rect x="90" y="124" width="70" height="6" rx="3"/>
+        <rect x="80" y="206" width="90" height="7" rx="3"/><rect x="80" y="254" width="90" height="7" rx="3"/><rect x="80" y="302" width="90" height="7" rx="3"/><rect x="80" y="350" width="90" height="7" rx="3"/></g>
+      <circle cx="14" cy="414" r="12" fill="#111"/><circle cx="236" cy="414" r="12" fill="#111"/>
+    </g>
+    <!-- scissor lift, empty -->
+    <g transform="translate(2800 900)">
+      <polygon points="-120,96 0,0 6,10 -110,104" fill="#4a4843"/>
+      <rect width="520" height="24" fill="url(#liftTop)"/>
+      <g stroke="#1e1d1b" stroke-width="11"><path d="M50 24L470 92M50 92L470 24"/></g>
+      <rect x="20" y="90" width="480" height="12" fill="#1e1d1b"/>
+    </g>
+    <!-- leaned tires -->
+    <g fill="none" stroke="#121110">
+      <ellipse cx="3420" cy="840" rx="52" ry="84" stroke-width="30"/>
+      <ellipse cx="3480" cy="846" rx="50" ry="80" stroke-width="28"/>
+    </g>
+    <!-- bikes parked in the bay, in the haze -->
+    <g opacity=".85">
+      <use href="#chop" x="3560" y="700" width="420" height="204" color="#141110"/>
+      <use href="#chop" x="3080" y="716" width="380" height="186" color="#1b1614"/>
+    </g>
+    <g fill="#8d8a84" opacity=".5">
+      <ellipse cx="3880" cy="878" rx="30" ry="4"/><ellipse cx="3360" cy="882" rx="28" ry="4"/>
+    </g>
+  </svg>
+</div>
+
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="grain" aria-hidden="true"></div>
+<div id="part-tip" class="part-tip" hidden><strong></strong><span></span></div>
+
+<canvas id="bike" aria-label="3D model of a custom chopper that assembles as you scroll" role="img"></canvas>
+
+<!-- ============ PARALLAX: foreground (fastest, blurred) ============ -->
+<div class="layer layer-near" aria-hidden="true">
+  <svg viewBox="0 0 4000 1000" preserveAspectRatio="xMinYMax slice">
+    <defs>
+      <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="22"/></filter>
+      <linearGradient id="dome" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#1c2124"/><stop offset=".4" stop-color="#3d464b"/><stop offset="1" stop-color="#15191b"/>
+      </linearGradient>
+    </defs>
+    <!-- enamel dome pendants close to the lens -->
+    <g>
+      <path d="M520 0V120M1880 0V70M3240 0V140" stroke="#0d0c0b" stroke-width="6"/>
+      <g fill="#ffe7b0" opacity=".55" filter="url(#glow)">
+        <ellipse cx="520" cy="212" rx="120" ry="30"/><ellipse cx="1880" cy="162" rx="120" ry="30"/><ellipse cx="3240" cy="232" rx="120" ry="30"/>
+      </g>
+      <g fill="url(#dome)">
+        <path d="M420 210 Q426 118 520 112 Q614 118 620 210Z"/>
+        <path d="M1780 160 Q1786 68 1880 62 Q1974 68 1980 160Z"/>
+        <path d="M3140 230 Q3146 138 3240 132 Q3334 138 3340 230Z"/>
+      </g>
+      <g fill="#fff6dc"><ellipse cx="520" cy="210" rx="94" ry="12"/><ellipse cx="1880" cy="160" rx="94" ry="12"/><ellipse cx="3240" cy="230" rx="94" ry="12"/></g>
+    </g>
+    <!-- chain hoist -->
+    <g transform="translate(2560 0)" stroke="#121110" fill="none">
+      <path d="M0 0V300" stroke-width="12" stroke-dasharray="18 7"/>
+      <path d="M-16 300h32v34c0 34-46 34-46 0" stroke-width="12"/>
+    </g>
+    <!-- stacked tires, bottom-left -->
+    <g fill="#0e0d0c">
+      <rect x="140" y="930" width="420" height="120" rx="60"/><rect x="170" y="840" width="400" height="104" rx="52"/>
+      <rect x="210" y="890" width="0" height="0"/>
+    </g>
+    <g fill="#24211e"><rect x="280" y="852" width="200" height="12" rx="6"/></g>
+    <!-- oil drum -->
+    <g transform="translate(1160 900)">
+      <rect width="230" height="300" rx="14" fill="#3b1210"/>
+      <g fill="#250a09"><rect y="90" width="230" height="12"/><rect y="200" width="230" height="12"/></g>
+      <ellipse cx="115" cy="6" rx="115" ry="16" fill="#521a16"/>
+    </g>
+    <!-- wrenches and a rag on the floor -->
+    <g fill="#191816">
+      <path d="M1520 960 L1760 930 L1764 946 L1524 976Z"/><circle cx="1770" cy="936" r="22"/>
+      <path d="M1600 990 L1820 984 L1820 998 L1600 1004Z"/>
+      <path d="M2120 952 Q2190 920 2260 950 Q2240 990 2150 990Z" fill="#5a2018"/>
+    </g>
+    <!-- rolling toolbox -->
+    <g transform="translate(2900 900)">
+      <rect width="320" height="340" rx="8" fill="#140f0e"/>
+      <g fill="#2a1b18"><rect x="16" y="20" width="288" height="42"/><rect x="16" y="74" width="288" height="42"/><rect x="16" y="128" width="288" height="62"/></g>
+      <g fill="#5b5753"><rect x="118" y="36" width="84" height="6"/><rect x="118" y="90" width="84" height="6"/><rect x="118" y="154" width="84" height="6"/></g>
+    </g>
+  </svg>
+</div>
+
+<!-- ============ CONTENT TRACK ============ -->
+<main id="top" class="track">
+  <section class="hero">
+    <div class="hero-copy">
+      <h1>Custom choppers, built one at a time on the same steel table.</h1>
+      <p>Nothing on this bike came out of a catalogue box. Keep scrolling and watch one come together, part by part.</p>
+      <p class="scroll-cue" aria-hidden="true"><span></span>Scroll to start the build</p>
+    </div>
+  </section>
+
+  <section class="station" id="station-1" data-station="0">
+    <article class="ticket">
+      <p class="ticket-step">Station 1 of 8</p>
+      <h2>Frame</h2>
+      <p>Hand-bent tubing, tacked in the jig and welded on this table. Every frame is drawn around the rider who ordered it.</p>
+      <dl><div><dt>Tubing</dt><dd>1¾ in DOM steel</dd></div><div><dt>Rake</dt><dd>38°</dd></div><div><dt>Stretch</dt><dd>4 in up, 2 in out</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-2" data-station="1">
+    <article class="ticket">
+      <p class="ticket-step">Station 2 of 8</p>
+      <h2>Engine</h2>
+      <p>The V-twin comes in on the hoist and sits low in the cradle, so the bike's weight stays down where you can feel it.</p>
+      <dl><div><dt>Displacement</dt><dd>117 cu in</dd></div><div><dt>Finish</dt><dd>Polished fins, chrome covers</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-3" data-station="2">
+    <article class="ticket">
+      <p class="ticket-step">Station 3 of 8</p>
+      <h2>Rear wheel</h2>
+      <p>A wide rear tire gives the bike its stance. The wheel is machined from one billet and laced to a chrome rotor.</p>
+      <dl><div><dt>Tire</dt><dd>300 mm section</dd></div><div><dt>Wheel</dt><dd>18 in billet</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-4" data-station="3">
+    <article class="ticket">
+      <p class="ticket-step">Station 4 of 8</p>
+      <h2>Front end</h2>
+      <p>A stretched wide-glide fork and a tall, thin front wheel. Long enough to look right, short enough to steer.</p>
+      <dl><div><dt>Fork</dt><dd>6 in over stock</dd></div><div><dt>Wheel</dt><dd>21 in, single rotor</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-5" data-station="4">
+    <article class="ticket">
+      <p class="ticket-step">Station 5 of 8</p>
+      <h2>Tank</h2>
+      <p>Stretched to follow the backbone. Candy apple over a silver base, with the flames laid out by hand and riveted trim.</p>
+      <dl><div><dt>Capacity</dt><dd>3.6 gal</dd></div><div><dt>Paint</dt><dd>Candy apple, ghost flames</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-6" data-station="5">
+    <article class="ticket">
+      <p class="ticket-step">Station 6 of 8</p>
+      <h2>Seat and fender</h2>
+      <p>A solo seat in black leather with red stitching. The fender is rolled to wrap the rear tire with a finger's width to spare.</p>
+      <dl><div><dt>Seat</dt><dd>Hand-stitched leather</dd></div><div><dt>Fender</dt><dd>Rolled 14-gauge steel</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-7" data-station="6">
+    <article class="ticket">
+      <p class="ticket-step">Station 7 of 8</p>
+      <h2>Exhaust</h2>
+      <p>Two-into-two drag pipes, bent to clear your boot and cut short so you hear the engine, not the muffler.</p>
+      <dl><div><dt>Pipes</dt><dd>1¾ in chrome</dd></div><div><dt>Tips</dt><dd>Slash cut</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="station" id="station-8" data-station="7">
+    <article class="ticket">
+      <p class="ticket-step">Station 8 of 8</p>
+      <h2>Bars and light</h2>
+      <p>Ape hangers set to your reach and a seven-inch headlight. After a shakedown ride, it rolls off the table.</p>
+      <dl><div><dt>Bars</dt><dd>16 in apes</dd></div><div><dt>Headlight</dt><dd>7 in chrome bucket</dd></div></dl>
+    </article>
+  </section>
+
+  <section class="customizer" id="customize" aria-labelledby="customize-title">
+    <article class="ticket spec-sheet">
+      <p class="ticket-step">Spec sheet</p>
+      <h2 id="customize-title">Make it yours</h2>
+      <p>Pick the paint, bars, wheels and fenders. The bike on the table changes as you choose.</p>
+      <div class="spec-tabs" role="tablist" aria-label="Parts to change"></div>
+      <div class="spec-panels"></div>
+      <div class="spec-foot">
+        <a class="spec-send" href="#consult">Request a consult with this build</a>
+        <button type="button" class="spec-reset">Reset to the shop build</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="finale" id="consult">
+    <article class="ticket ticket-form">
+      <h2>Your bike starts as a sketch on this table.</h2>
+      <p>Tell us what you ride now and what you want to ride next. We take on six builds a year and call back within two working days.</p>
+      <form id="consult-form" novalidate>
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+        <label>What do you want built?<textarea name="idea" rows="2" placeholder="A long, low chopper for two-up weekends"></textarea></label>
+        <p class="form-build" hidden>Your build: <span></span> <a href="#customize">Change it</a></p>
+        <input type="hidden" name="build">
+        <label class="hp" aria-hidden="true">Company<input name="company" tabindex="-1" autocomplete="off"></label>
+        <button type="submit">Request a consult</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </article>
+    <footer class="shop-foot">
+      <p>Kettle &amp; Rake Customs, Bay 4, 1180 Foundry Street</p>
+      <p>Shop open Tuesday to Saturday, 8 to 6</p>
+      <p class="credit">Bike model: <a href="https://sketchfab.com/3d-models/chopper-3d-model-obj-format-02a41e67326d4d29855051ba5c5c45f9" rel="noopener">Chopper 3D model</a> by <a href="https://sketchfab.com/source4" rel="noopener">Source 4</a>, <a href="http://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Refinished in candy red.</p>
+    </footer>
+  </section>
+</main>
+
+<nav class="rail" aria-label="Build stations">
+  <ol>
+    <li><a href="#station-1"><span>Frame</span></a></li>
+    <li><a href="#station-2"><span>Engine</span></a></li>
+    <li><a href="#station-3"><span>Rear wheel</span></a></li>
+    <li><a href="#station-4"><span>Front end</span></a></li>
+    <li><a href="#station-5"><span>Tank</span></a></li>
+    <li><a href="#station-6"><span>Seat and fender</span></a></li>
+    <li><a href="#station-7"><span>Exhaust</span></a></li>
+    <li><a href="#station-8"><span>Bars and light</span></a></li>
+    <li><a href="#customize"><span>Make it yours</span></a></li>
+  </ol>
+</nav>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
