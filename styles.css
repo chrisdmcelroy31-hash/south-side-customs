@@ -353,3 +353,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @media (max-width: 760px) {
   .sound-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
+
+/* ---------- drag to spin ---------- */
+/* sideways drags spin the bike; the browser still handles vertical scrolling and pinch zoom */
+body { touch-action: pan-y pinch-zoom; cursor: grab; }
+.ticket, .masthead, .rail, .shop-foot { cursor: auto; }
+.spec-tabs, .spec-sheet { touch-action: auto; }
+html.spinning, html.spinning * { cursor: grabbing !important; user-select: none; }
+.spin-hint {
+  position: fixed; left: 50%; bottom: 18px; z-index: 7; margin: 0;
+  transform: translate(-50%, 8px); opacity: 0; pointer-events: none;
+  font: 600 .9rem/1 var(--body); letter-spacing: .02em; color: #f3ecdc;
+  background: rgba(20,16,14,.78); border: 1px solid rgba(243,236,220,.25); border-radius: 999px;
+  padding: 9px 16px; transition: opacity .35s, transform .35s; white-space: nowrap;
+}
+.spin-hint span { display: inline-block; margin-right: 4px; }
+.spin-hint.show { opacity: 1; transform: translate(-50%, 0); }
+@media (min-width: 761px) { .spin-hint { left: 62%; } }
+@media (max-width: 760px) { .spin-hint { bottom: 10px; font-size: .82rem; padding: 7px 13px; } }

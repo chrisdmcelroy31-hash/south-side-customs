@@ -1122,6 +1122,43 @@ function updateRail(cur) {
   });
 }
 
+/* ---------------- drag to spin the bike 360° ---------------- */
+// Drag sideways anywhere off the cards (mouse or finger) to orbit the camera all the way around.
+// A flick keeps it turning for a moment; when you scroll again it eases back to the build's own angle.
+let userAz = 0, spinVel = 0, dragging = null, spun = false;
+const NOSPIN = '.ticket, .rail, .masthead, .shop-foot, a, button, input, textarea, label, select';
+const spinHint = document.querySelector('.spin-hint');
+addEventListener('pointerdown', (e) => {
+  if (e.button > 0 || e.target.closest?.(NOSPIN)) return;
+  // a finger has to move sideways first, so vertical swipes still scroll the page
+  dragging = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), on: e.pointerType !== 'touch' };
+  spinVel = 0;
+});
+addEventListener('pointermove', (e) => {
+  if (!dragging || e.pointerId !== dragging.id) return;
+  const dx = e.clientX - dragging.x, now = performance.now();
+  if (!dragging.on) {
+    if (Math.abs(dx) < 8) return;
+    if (Math.abs(dx) < Math.abs(e.clientY - dragging.y)) { dragging = null; return; }
+    dragging.on = true;
+  }
+  if (!spun) { spun = true; spinHint?.classList.remove('show'); }
+  document.documentElement.classList.add('spinning');
+  const deg = (dx * 360) / Math.min(Math.max(vw, 360), 900); // one screen width (up to 900px) = one full turn
+  userAz += deg;
+  const dts = Math.max(1, now - dragging.t) / 1000;
+  spinVel = lerp(spinVel, deg / dts, 0.5);
+  dragging.x = e.clientX; dragging.y = e.clientY; dragging.t = now;
+}, { passive: true });
+const endSpin = (e) => {
+  if (!dragging || (e.pointerId !== undefined && e.pointerId !== dragging.id)) return;
+  if (performance.now() - dragging.t > 80 || reduceMotion) spinVel = 0; // held still before letting go: no flick
+  dragging = null;
+  document.documentElement.classList.remove('spinning');
+};
+addEventListener('pointerup', endSpin);
+addEventListener('pointercancel', endSpin);
+
 function frameTick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   smooth = reduceMotion ? target : lerp(smooth, target, 1 - Math.pow(0.0015, dt));
@@ -1145,6 +1182,18 @@ function frameTick() {
     c.az = lerp(c.az, f.az, k); c.el = lerp(c.el, f.el, k); c.d = lerp(c.d, f.d, k); c.t.lerp(f.t, k);
     az = lerp(az, c.az, sw); el = lerp(el, c.el, sw); d = lerp(d, c.d, sw);
     tgt = specCam.target.copy(TARGET).lerp(c.t, sw);
+  }
+  if (!dragging?.on) {
+    userAz += spinVel * dt;
+    spinVel *= Math.exp(-dt * 3.5);
+    if (Math.abs(spinVel) < 1) spinVel = 0;
+    // scrolling again: ease back to the camera path's own angle (the nearest full turn, so it never unwinds)
+    if (Math.abs(smooth - target) > 2 && !spinVel) userAz = lerp(userAz, Math.round(userAz / 360) * 360, 1 - Math.exp(-dt * 2.5));
+  }
+  az += userAz;
+  if (spinHint) {
+    const want = !spun && canvas.classList.contains('ready') && (sw > 0.5 || smooth >= framing.formRange[0]);
+    if (want !== spinHint.classList.contains('show')) spinHint.classList.toggle('show', want);
   }
   d *= frameView(sw);
   const aspect = vw / vh;
