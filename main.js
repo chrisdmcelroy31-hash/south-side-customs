@@ -1676,3 +1676,23 @@ sheet.querySelector('.spec-reset').addEventListener('click', () => {
 applyPaint();
 APPLY.seat();
 syncSheet();
+
+/* ---------------- phones: the spec sheet fades out as it leaves ---------------- */
+// On a phone the sheet sits under the bike. When the section ends it scrolls up over the bike,
+// so it fades away as it rises instead of covering it.
+{
+  const sheetEl = document.querySelector('.spec-sheet');
+  const phone = matchMedia('(max-width: 760px)');
+  const fadeSheet = () => {
+    if (!sheetEl) return;
+    if (!phone.matches) { sheetEl.style.opacity = ''; sheetEl.style.visibility = ''; return; }
+    const rise = innerHeight * 0.46 - sheetEl.getBoundingClientRect().top - 12; // how far it has moved up from its pinned spot
+    const k = Math.min(1, Math.max(0, 1 - rise / (innerHeight * 0.16)));
+    sheetEl.style.opacity = k < 1 ? k.toFixed(3) : '';
+    sheetEl.style.visibility = k === 0 ? 'hidden' : '';
+  };
+  addEventListener('scroll', fadeSheet, { passive: true });
+  addEventListener('resize', fadeSheet);
+  phone.addEventListener?.('change', fadeSheet);
+  fadeSheet();
+}
