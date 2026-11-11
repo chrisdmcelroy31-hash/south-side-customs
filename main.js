@@ -4,6 +4,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { drawTank, GRAPHICS, GRAPHIC_COLORS } from './tank-art.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const V = (x, y, z = 0) => new THREE.Vector3(x, y, z);
@@ -146,54 +147,7 @@ const steelMat = new THREE.MeshStandardMaterial({ color: 0x5b5f63, metalness: 0.
 const lens = new THREE.MeshStandardMaterial({ color: 0xd8d2c4, emissive: 0xffe6b0, emissiveIntensity: 0.05, roughness: 0.15, metalness: 0.2 });
 const tail = new THREE.MeshStandardMaterial({ color: 0x550000, emissive: 0xff1a1a, emissiveIntensity: 0.9 });
 
-// candy over silver: ghost flames airbrushed into the base coat, pinstriped by hand
-// tank artwork: the base coat shades from dark to bright, with ghost flames or pinstripes laid over it
-const shade = (hex, k) => {
-  const n = parseInt(hex.slice(1), 16), f = (v) => Math.min(255, Math.round(v * k));
-  return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`;
-};
-function drawTank(g, hex = '#7d0a15', graphics = 'flames') {
-  const n = parseInt(hex.slice(1), 16);
-  const light = (0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255)) / 255 > 0.5;
-  const base = g.createLinearGradient(0, 0, 0, 512);
-  base.addColorStop(0, shade(hex, light ? 0.62 : 0.37)); base.addColorStop(.45, shade(hex, 1));
-  base.addColorStop(.6, shade(hex, 0.92)); base.addColorStop(1, shade(hex, light ? 0.55 : 0.29));
-  g.filter = 'none';
-  g.fillStyle = base; g.fillRect(0, 0, 2048, 512);
-  const ink = light ? 'rgba(40,30,26,.7)' : 'rgba(232,226,214,.55)';
-  const x0 = 1024;
-  if (graphics === 'pinstripe') {
-    // a long double pinstripe running back from the nose, flicked into a teardrop at the end
-    [-1, 1].forEach((dir) => [0, 9].forEach((o) => {
-      g.strokeStyle = ink; g.lineWidth = o ? 1.4 : 2.2;
-      g.beginPath(); g.moveTo(x0, 214 + o);
-      g.bezierCurveTo(x0 + dir * 300, 200 + o, x0 + dir * 640, 236 + o, x0 + dir * 860, 222 + o);
-      g.bezierCurveTo(x0 + dir * 930, 218 + o, x0 + dir * 930, 262 - o, x0 + dir * 860, 262 - o);
-      g.bezierCurveTo(x0 + dir * 700, 262 - o, x0 + dir * 400, 300 - o, x0, 296 - o);
-      g.stroke();
-    }));
-    return;
-  }
-  if (graphics !== 'flames') return;
-  [-1, 1].forEach((dir) => {
-    for (let k = 0; k < 5; k++) {
-      const y = 196 + k * 30 + (k % 2) * 8;
-      const len = 400 + (k % 3) * 120 + (k === 2 ? 150 : 0);
-      const path = new Path2D();
-      path.moveTo(x0, y - 24);
-      path.bezierCurveTo(x0 + dir * len * .35, y - 40, x0 + dir * len * .7, y + 10, x0 + dir * len, y - 34);
-      path.bezierCurveTo(x0 + dir * len * .75, y + 4, x0 + dir * len * .45, y + 28, x0, y + 22);
-      path.closePath();
-      // ghost flames airbrushed under the clear: silver on dark paint, smoke on light paint
-      g.save(); g.filter = 'blur(5px)';
-      const lg = g.createLinearGradient(x0, 0, x0 + dir * len, 0);
-      const c = light ? '60,50,46' : '214,190,192';
-      lg.addColorStop(0, `rgba(${c},.6)`); lg.addColorStop(.75, `rgba(${c},.28)`); lg.addColorStop(1, `rgba(${c},0)`);
-      g.fillStyle = lg; g.fill(path); g.restore();
-      g.strokeStyle = ink; g.lineWidth = 1.6; g.stroke(path);
-    }
-  });
-}
+// tank artwork (flames, scallops, stripes...) is painted in tank-art.js
 function flameTexture() {
   return canvasTex(2048, 512, (g) => drawTank(g), { srgb: true });
 }
@@ -1260,6 +1214,8 @@ const PAINTS = [
   ['Midnight blue', '#0f1a48'], ['Purple haze', '#4a1a78'], ['Magenta', '#961058'],
   ['Gloss black', '#121215', 0.2], ['Gunmetal', '#41464d', 0.75], ['Bone white', '#d9d0b9', 0.08],
 ];
+// close on the tank, from the side, so the graphics read
+const TANK_VIEW = { az: 84, el: 16, d: 4.4, t: V(0.35, 1.05, 0) };
 const SPEC = [
   { id: 'style', label: 'Style', focus: { az: 70, el: 11, d: 9.0, t: V(0.4, 0.8, 0) }, fields: [
     { key: 'style', label: 'Chopper style', name: 'Style', choices: [
@@ -1269,7 +1225,8 @@ const SPEC = [
   ] },
   { id: 'paint', label: 'Paint', focus: { az: 60, el: 14, d: 8.4, t: V(0.3, 0.85, 0) }, fields: [
     { key: 'color', label: 'Color', name: 'Paint', swatch: true, choices: PAINTS.map((c, i) => [String(i), c[0]]) },
-    { key: 'graphics', label: 'Graphics', name: 'Graphics', choices: [['flames', 'Ghost flames'], ['pinstripe', 'Pinstripes'], ['solid', 'Solid']] },
+    { key: 'graphics', label: 'Graphics', name: 'Graphics', focus: TANK_VIEW, choices: GRAPHICS },
+    { key: 'stripe', label: 'Graphic color', name: 'Graphic color', focus: TANK_VIEW, choices: GRAPHIC_COLORS },
   ] },
   { id: 'bars', label: 'Bars', focus: { az: 30, el: 16, d: 5.6, t: V(0.7, 1.35, 0) }, fields: [
     { key: 'bars', label: 'Style', name: 'Bars', choices: [
@@ -1313,17 +1270,17 @@ const SPEC = [
 const FIELDS = SPEC.flatMap((tab) => tab.fields.map((f) => ({ ...f, tab })));
 const SHOP_BUILD = { color: '0', graphics: 'flames', bars: 'buckhorn', wheel: 'spoke', rear: '300', front: '21', rearFender: 'wrap',
   frontFender: 'none', engine: 'chrome', pipes: 'chrome', rims: 'chrome', barsFin: 'paint', seat: 'black', seatStyle: 'solo',
-  style: 'prostreet', fork: '0', frontTire: 'skinny', pipeLen: 'stock' };
+  style: 'prostreet', fork: '0', frontTire: 'skinny', pipeLen: 'stock', stripe: 'silver' }; // new keys go last so old shared links still work
 const KEYS = Object.keys(SHOP_BUILD);
 // each chopper style is a full set of choices; anything changed afterwards marks the style as modified
 const STYLES = {
   prostreet: { ...SHOP_BUILD },
   oldschool: { color: '1', graphics: 'pinstripe', bars: 'apes', wheel: 'spoke', rear: '200', front: '21', rearFender: 'bob', frontFender: 'none',
-    engine: 'chrome', pipes: 'chrome', rims: 'chrome', barsFin: 'chrome', seat: 'oxblood', seatStyle: 'kq', fork: '12', frontTire: 'skinny', pipeLen: 'short' },
+    engine: 'chrome', pipes: 'chrome', rims: 'chrome', barsFin: 'chrome', seat: 'oxblood', seatStyle: 'kq', fork: '12', frontTire: 'skinny', pipeLen: 'short', stripe: 'gold' },
   bobber: { color: '12', graphics: 'solid', bars: 'drag', wheel: 'spoke', rear: '240', front: '23', rearFender: 'bob', frontFender: 'blade',
-    engine: 'black', pipes: 'black', rims: 'black', barsFin: 'black', seat: 'brown', seatStyle: 'sprung', fork: '0', frontTire: 'fat', pipeLen: 'shorty' },
-  longfork: { color: '3', graphics: 'flames', bars: 'z', wheel: 'billet', rear: '240', front: '21', rearFender: 'bob', frontFender: 'none',
-    engine: 'chrome', pipes: 'heat', rims: 'chrome', barsFin: 'chrome', seat: 'black', seatStyle: 'solo', fork: '18', frontTire: 'skinny', pipeLen: 'long' },
+    engine: 'black', pipes: 'black', rims: 'black', barsFin: 'black', seat: 'brown', seatStyle: 'sprung', fork: '0', frontTire: 'fat', pipeLen: 'shorty', stripe: 'silver' },
+  longfork: { color: '3', graphics: 'hotrod', bars: 'z', wheel: 'billet', rear: '240', front: '21', rearFender: 'bob', frontFender: 'none',
+    engine: 'chrome', pipes: 'heat', rims: 'chrome', barsFin: 'chrome', seat: 'black', seatStyle: 'solo', fork: '18', frontTire: 'skinny', pipeLen: 'long', stripe: 'black' },
 };
 Object.entries(STYLES).forEach(([k, v]) => { v.style = k; });
 const styleMatches = () => KEYS.every((k) => spec[k] === STYLES[spec.style][k]);
@@ -1353,7 +1310,7 @@ function applyPaint() {
   const body = new THREE.Color(hex).multiplyScalar(0.72);
   [candy, paintShell, model.frameCandy].forEach((m) => { if (m) { m.color.copy(body); m.metalness = metal; } });
   tankMat.metalness = metal;
-  drawTank(tankMat.map.image.getContext('2d'), hex, spec.graphics);
+  drawTank(tankMat.map.image.getContext('2d'), hex, spec.graphics, spec.stripe);
   tankMat.map.needsUpdate = true;
 }
 
@@ -1584,7 +1541,7 @@ function applyFinishes() {
 }
 
 const APPLY = {
-  color: applyPaint, graphics: applyPaint,
+  color: applyPaint, graphics: applyPaint, stripe: applyPaint,
   seat: () => { leather.color.setHex(LEATHER[spec.seat]); if (model.ready) seatSpec(); },
   seatStyle: () => model.ready && applySeat(),
   bars: () => model.ready && buildBars(), barsFin: () => model.ready && buildBars(),
